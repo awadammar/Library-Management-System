@@ -5,19 +5,24 @@ import cc.maids.library.management.exception.DuplicateEntityException;
 import cc.maids.library.management.repository.PatronRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = "patrons")
 public class PatronService {
     @Autowired
     private PatronRepository patronRepository;
 
+    @Cacheable
     public List<Patron> getAllPatrons() {
         return patronRepository.findAll();
     }
 
+    @Cacheable(key = "#id")
     public Patron getPatronById(Long id) {
         return patronRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Patron not found with id: " + id));

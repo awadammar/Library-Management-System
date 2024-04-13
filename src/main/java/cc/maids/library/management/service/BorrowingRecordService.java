@@ -23,10 +23,7 @@ public class BorrowingRecordService {
             throw new BusinessException("Book with ID " + book.getId() + " is not available for borrowing.");
         }
 
-        BorrowingRecord borrowingRecord = new BorrowingRecord();
-        borrowingRecord.setBook(book);
-        borrowingRecord.setPatron(patron);
-        borrowingRecord.setBorrowDate(new Date());
+        BorrowingRecord borrowingRecord = new BorrowingRecord(book, patron);
         borrowingRecordRepository.save(borrowingRecord);
 
         // Update book availability status

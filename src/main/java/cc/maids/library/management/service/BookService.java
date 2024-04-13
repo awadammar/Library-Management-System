@@ -5,19 +5,24 @@ import cc.maids.library.management.exception.DuplicateEntityException;
 import cc.maids.library.management.repository.BookRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = "books")
 public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
+    @Cacheable
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
 
+    @Cacheable(key = "#id")
     public Book getBookById(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id));

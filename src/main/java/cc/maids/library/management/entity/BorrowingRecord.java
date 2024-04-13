@@ -33,4 +33,9 @@ public class BorrowingRecord {
     @Column(name = "return_date")
     private Date returnDate;
 
+    public BorrowingRecord(Book book, Patron patron) {
+        this.book = book;
+        this.patron = patron;
+        this.borrowDate = new Date();
+    }
 }
