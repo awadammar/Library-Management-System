@@ -4,8 +4,10 @@ import cc.maids.library.management.entity.Patron;
 import cc.maids.library.management.exception.DuplicateEntityException;
 import cc.maids.library.management.repository.PatronRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +15,16 @@ import java.util.List;
 
 @Service
 @CacheConfig(cacheNames = "patrons")
+@AllArgsConstructor
 public class PatronService {
-    @Autowired
     private PatronRepository patronRepository;
 
-    @Cacheable
+    @Cacheable("patrons")
     public List<Patron> getAllPatrons() {
         return patronRepository.findAll();
     }
 
-    @Cacheable(key = "#id")
+    @Cacheable(value = "patrons", key = "#id")
     public Patron getPatronById(Long id) {
         return patronRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Patron not found with id: " + id));
@@ -36,6 +38,7 @@ public class PatronService {
         return patronRepository.save(patron);
     }
 
+    @CachePut(key = "#id")
     public Patron updatePatron(Long id, Patron updatedPatron) {
         Patron existingPatron = getPatronById(id);
 
@@ -52,6 +55,7 @@ public class PatronService {
         return patronRepository.save(existingPatron);
     }
 
+    @CacheEvict(key = "#id")
     public void deletePatron(Long id) {
         Patron existingPatron = getPatronById(id);
         patronRepository.delete(existingPatron);

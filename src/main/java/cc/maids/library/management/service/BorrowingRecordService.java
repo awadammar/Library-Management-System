@@ -6,14 +6,14 @@ import cc.maids.library.management.entity.Patron;
 import cc.maids.library.management.exception.BusinessException;
 import cc.maids.library.management.repository.BorrowingRecordRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
+@AllArgsConstructor
 public class BorrowingRecordService {
-    @Autowired
     private BorrowingRecordRepository borrowingRecordRepository;
 
     @Transactional

@@ -4,8 +4,10 @@ import cc.maids.library.management.entity.Book;
 import cc.maids.library.management.exception.DuplicateEntityException;
 import cc.maids.library.management.repository.BookRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +15,8 @@ import java.util.List;
 
 @Service
 @CacheConfig(cacheNames = "books")
+@AllArgsConstructor
 public class BookService {
-    @Autowired
     private BookRepository bookRepository;
 
     @Cacheable
@@ -36,6 +38,7 @@ public class BookService {
         return bookRepository.save(book);
     }
 
+    @CachePut(key = "#id")
     public Book updateBook(Long id, Book updatedBook) {
         Book existingBook = getBookById(id);
 
@@ -54,6 +57,7 @@ public class BookService {
         return bookRepository.save(existingBook);
     }
 
+    @CacheEvict(key = "#id")
     public void deleteBook(Long id) {
         Book existingBook = getBookById(id);
         bookRepository.delete(existingBook);
